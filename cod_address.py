@@ -101,7 +101,6 @@ class Checklist(object):
             data_text.append(mail_address_first)
             data_text.append(mail_address_second)
             data_text.append(country)
-            print(data_text)
             # data_text = ["订单编号", "所属城市", "邮寄地址1(完整导出)", "邮寄地址2", "国家(中)"]
             yield data_text
 
