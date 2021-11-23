@@ -96,11 +96,14 @@ class Checklist(object):
             mail_address_first = str(rows[x][11].value)
             mail_address_second = str(rows[x][12].value)
             country = str(rows[x][8].value)
+            post_code = str(rows[x][9].value)
             data_text.append(order)
             data_text.append(city)
             data_text.append(mail_address_first)
             data_text.append(mail_address_second)
+            data_text.append(post_code)
             data_text.append(country)
+            print(data_text)
             # data_text = ["订单编号", "所属城市", "邮寄地址1(完整导出)", "邮寄地址2", "国家(中)"]
             yield data_text
 
@@ -118,7 +121,7 @@ class Checklist(object):
         self.ws[f'A{i}'] = order
         file_location = f'./{self.file_names}{self.date}.xlsx'
         self.wb.save(file_location)
-        print(f'{order} 存储地址为：{file_location}')
+        print(f'{order} 存储地址为：{file_location}' + '\n')
 
     @property
     def gui_choose_file(self):
@@ -139,26 +142,33 @@ class Checklist(object):
     def run(self):
         count = 1
         for data_excel in self.excel_read(self.gui_choose_file):
-            # 查找地址3列
+            # 查找地址(所属城市&邮寄地址1&邮寄地址2)
             address_1_4 = self.address_join(1, 4, data_excel)
             if self.is_number(address_1_4):
                 # 邮编长度大于4则视为已查到
-                if len(self.find_func(address_1_4, data_excel[4])) >= 4:
-                    print(f'{data_excel[0]} 1-4已查到地址')
+                if len(self.find_func(address_1_4, data_excel[5])) >= 4:
+                    print(f'{data_excel[0]} (所属城市&邮寄地址1&邮寄地址2)已查到地址' + '\n')
                     continue
 
-            # 查找地址前两列
+            # 查找地址(所属城市&邮寄地址1)
             address_1_3 = self.address_join(1, 3, data_excel)
             if self.is_number(address_1_3):
-                if len(self.find_func(address_1_3, data_excel[4])) >= 4:
-                    print(f'{data_excel[0]} 1-3已查到地址')
+                if len(self.find_func(address_1_3, data_excel[5])) >= 4:
+                    print(f'{data_excel[0]} (所属城市&邮寄地址1)已查到地址' + '\n')
                     continue
 
-            # 查找地址后两列
+            # 查找地址(邮寄地址1&邮寄地址2)
             address_2_4 = self.address_join(2, 4, data_excel)
             if self.is_number(address_2_4):
-                if len(self.find_func(address_2_4, data_excel[4])) >= 4:
-                    print(f'{data_excel[0]} 2-4已查到地址')
+                if len(self.find_func(address_2_4, data_excel[5])) >= 4:
+                    print(f'{data_excel[0]} (邮寄地址1&邮寄地址2)已查到地址' + '\n')
+                    continue
+
+            # 查找地址(邮寄地址1&邮寄地址2&邮政编码)
+            address_2_5 = self.address_join(2, 5, data_excel)
+            if self.is_number(address_2_5):
+                if len(self.find_func(address_2_5, data_excel[5])) >= 4:
+                    print(f'{data_excel[0]} (邮寄地址1&邮寄地址2&邮政编码)已查到地址' + '\n')
                     continue
 
             self.excel_save(data_excel[0], count)
